@@ -567,6 +567,88 @@ namespace BlinkBackend.Controllers
            }
 
 
+        [HttpGet]
+        public HttpResponseMessage GetWritersOfMovies(int editorId, int movieId)
+        {
+            BlinkMovieEntities db = new BlinkMovieEntities();
+
+            try
+            {
+               
+                var writerIds = db.GetMovie
+                                    .Where(g => g.Editor_ID == editorId && g.Movie_ID == movieId)
+                                    .Select(g => g.Writer_ID)
+                                    .ToList();
+
+                if (writerIds.Count == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No writers found for the given Data");
+                }
+
+              
+                var writersData = db.Writer
+                                    .Where(w => writerIds.Contains(w.Writer_ID))
+                                    .Select(w => new
+                                    {
+                                        w.Writer_ID,
+                                        w.UserName,
+                                        w.Image
+                                    })
+                                    .ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, writersData);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+
+        [HttpGet]
+        public HttpResponseMessage GetSummaryAndClips(int movieId, int writerId)
+        {
+            BlinkMovieEntities db = new BlinkMovieEntities();
+
+            try
+            {
+                
+                var summaryData = db.Summary.Where(s => s.Movie_ID == movieId && s.Writer_ID == writerId).Select(s => s.Summary1)
+                            .FirstOrDefault(); ;
+
+                if (summaryData == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Summary data not found for the given parameters");
+                }
+
+               
+                var clipsData = db.Clips
+                                    .Where(c => c.Movie_ID == movieId && c.Writer_ID == writerId)
+                                    .Select(c => new
+                                    {
+                                        c.Clips_ID,
+                                        c.Url,
+                                        c.End_time,
+                                        c.Start_time,
+                                        c.Title,
+                                        c.isCompoundClip
+                                    })
+                                    .OrderBy(c => c.Start_time)
+                                    .ToList();
+
+                var responseData = new
+                {
+                    SummaryData = summaryData,
+                    ClipsData = clipsData
+                };
+
+                return Request.CreateResponse(HttpStatusCode.OK, responseData);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
 
         /* private string SaveImageToDisk(HttpPostedFile imageFile)
          {
