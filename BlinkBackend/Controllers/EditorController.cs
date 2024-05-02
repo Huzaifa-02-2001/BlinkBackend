@@ -603,7 +603,7 @@ namespace BlinkBackend.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
-
+        
 
         [HttpGet]
         public HttpResponseMessage GetSummaryAndClips(int movieId, int writerId)
