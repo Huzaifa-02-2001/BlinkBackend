@@ -606,12 +606,13 @@ namespace BlinkBackend.Controllers
         
 
         [HttpGet]
-        public HttpResponseMessage GetSummaryAndClips(int movieId, int writerId)
+        public HttpResponseMessage GetAcceptedSummary(int movieId, int writerId)
         {
             BlinkMovieEntities db = new BlinkMovieEntities();
 
             try
             {
+                var movieData = db.Movie.Where(m => m.Movie_ID == movieId).Select(s => s.Name).FirstOrDefault();
                 
                 var summaryData = db.Summary.Where(s => s.Movie_ID == movieId && s.Writer_ID == writerId).Select(s => s.Summary1)
                             .FirstOrDefault(); ;
@@ -622,6 +623,36 @@ namespace BlinkBackend.Controllers
                 }
 
                
+
+                var responseData = new
+                {
+                    movieName = movieData,
+                    SummaryData = summaryData,
+                   
+                };
+
+                return Request.CreateResponse(HttpStatusCode.OK, responseData);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetAcceptedSummaryClips(int movieId, int writerId)
+        {
+            BlinkMovieEntities db = new BlinkMovieEntities();
+
+            try
+            {
+                var movieData = db.Movie.Where(m => m.Movie_ID == movieId).Select(s => s.Name).FirstOrDefault();
+
+                
+
+               
+
+
                 var clipsData = db.Clips
                                     .Where(c => c.Movie_ID == movieId && c.Writer_ID == writerId)
                                     .Select(c => new
@@ -635,10 +666,13 @@ namespace BlinkBackend.Controllers
                                     })
                                     .OrderBy(c => c.Start_time)
                                     .ToList();
-
+                if (clipsData == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Clips data not found for the given parameters");
+                }
                 var responseData = new
                 {
-                    SummaryData = summaryData,
+                    movieName = movieData,
                     ClipsData = clipsData
                 };
 
@@ -649,6 +683,7 @@ namespace BlinkBackend.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+
 
         /* private string SaveImageToDisk(HttpPostedFile imageFile)
          {
@@ -723,7 +758,6 @@ namespace BlinkBackend.Controllers
         [HttpGet]
         public HttpResponseMessage GetMoviesByEditorId(int editorId, string type)
         {
-
             using (BlinkMovieEntities db = new BlinkMovieEntities())
             {
                 try
@@ -733,51 +767,49 @@ namespace BlinkBackend.Controllers
                     if (type == "Movie")
                     {
                         moviesData = db.GetMovie
-                                      .Where(m => m.Editor_ID == editorId)
-                                      .Join(db.Movie.Where(movie => movie.Type == "Movie"),
-                                            getMovie => getMovie.Movie_ID,
-                                            movie => movie.Movie_ID,
-                                            (getMovie, movie) => new
-                                            {
-                                                Editor_ID = getMovie.Editor_ID,
-                                                MovieID = getMovie.Movie_ID,
-                                                Title = movie.Name,
-                                                Image = movie.Image,
-                                                Type = movie.Type
-                                            })
-                                      .ToList();
+                                        .Where(m => m.Editor_ID == editorId)
+                                        .Join(db.Movie.Where(movie => movie.Type == "Movie"),
+                                                getMovie => getMovie.Movie_ID,
+                                                movie => movie.Movie_ID,
+                                                (getMovie, movie) => new
+                                                {
+                                                    Editor_ID = getMovie.Editor_ID,
+                                                    MovieID = getMovie.Movie_ID,
+                                                    Title = movie.Name,
+                                                    Image = movie.Image,
+                                                    Type = movie.Type
+                                                })
+                                        .Distinct() 
+                                        .ToList();
                     }
                     else
                     {
                         moviesData = db.GetMovie
-                                      .Where(m => m.Editor_ID == editorId)
-                                      .Join(db.Movie.Where(movie => movie.Type != "Movie"),
-                                            getMovie => getMovie.Movie_ID,
-                                            movie => movie.Movie_ID,
-                                            (getMovie, movie) => new
-                                            {
-                                                Editor_ID = getMovie.Editor_ID,
-                                                MovieID = getMovie.Movie_ID,
-                                                Title = movie.Name,
-                                                Image = movie.Image,
-                                                Type = movie.Type
-                                            })
-                                      .ToList();
+                                        .Where(m => m.Editor_ID == editorId)
+                                        .Join(db.Movie.Where(movie => movie.Type != "Movie"),
+                                                getMovie => getMovie.Movie_ID,
+                                                movie => movie.Movie_ID,
+                                                (getMovie, movie) => new
+                                                {
+                                                    Editor_ID = getMovie.Editor_ID,
+                                                    MovieID = getMovie.Movie_ID,
+                                                    Title = movie.Name,
+                                                    Image = movie.Image,
+                                                    Type = movie.Type
+                                                })
+                                        .Distinct() 
+                                        .ToList();
                     }
-
-
-
-
 
                     return Request.CreateResponse(HttpStatusCode.OK, moviesData);
                 }
                 catch (Exception ex)
                 {
-
                     return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
                 }
             }
         }
+
 
 
         [HttpPost]

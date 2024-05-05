@@ -528,6 +528,7 @@ namespace BlinkBackend.Controllers
         [HttpPut]
         public HttpResponseMessage UpdateSummary(int sentProjectId, string newSummary)
         {
+            DateTime currentDate = DateTime.Now;
             BlinkMovieEntities db = new BlinkMovieEntities();
 
             try
@@ -539,8 +540,13 @@ namespace BlinkBackend.Controllers
                     return Request.CreateResponse(HttpStatusCode.NotFound, "Summary not found");
                 }
 
+                var sentProjectTableUpdate = db.SentProject.FirstOrDefault(s => s.SentProject_ID == sentProjectId);
+
 
                 summaryToUpdate.Summary1 = newSummary;
+                sentProjectTableUpdate.Status = "Sent";
+                sentProjectTableUpdate.Send_at = currentDate.ToString();
+                sentProjectTableUpdate.Editor_Notification = true;
 
                 db.SaveChanges();
 
