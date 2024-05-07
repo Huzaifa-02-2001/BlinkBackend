@@ -239,7 +239,7 @@ namespace BlinkBackend.Controllers
 
                           var result = new
                         {
-                            lastIssuedDate= lastIssuedDate,
+                            issueDate= lastIssuedDate,
                             Movie = movie,
                             Writer = writer,
                          
