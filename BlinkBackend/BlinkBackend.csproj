@@ -332,6 +332,9 @@
     <Compile Include="Models\Favorites.cs">
       <DependentUpon>Blink.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\FreeMovie.cs">
+      <DependentUpon>Blink.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Genre.cs">
       <DependentUpon>Blink.tt</DependentUpon>
     </Compile>

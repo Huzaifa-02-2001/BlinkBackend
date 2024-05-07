@@ -64,6 +64,16 @@
           <Property Name="Writer_ID" Type="int" />
           <Property Name="Reader_ID" Type="int" />
         </EntityType>
+        <EntityType Name="FreeMovie">
+          <Key>
+            <PropertyRef Name="FreeMovie_ID" />
+          </Key>
+          <Property Name="FreeMovie_ID" Type="int" Nullable="false" />
+          <Property Name="Reader_ID" Type="int" />
+          <Property Name="Movie_ID" Type="int" />
+          <Property Name="Writer_ID" Type="int" />
+          <Property Name="issueDate_ID" Type="varchar(max)" />
+        </EntityType>
         <EntityType Name="Genre">
           <Key>
             <PropertyRef Name="Genre_ID" />
@@ -553,6 +563,7 @@
           <EntitySet Name="DramasClips" EntityType="Self.DramasClips" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Editor" EntityType="Self.Editor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Favorites" EntityType="Self.Favorites" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FreeMovie" EntityType="Self.FreeMovie" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Genre" EntityType="Self.Genre" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GetMovie" EntityType="Self.GetMovie" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="History" EntityType="Self.History" Schema="dbo" store:Type="Tables" />
@@ -754,6 +765,16 @@
           <NavigationProperty Name="Movie" Relationship="Self.FK__Favorites__MID__7B5B524B" FromRole="Favorites" ToRole="Movie" />
           <NavigationProperty Name="Reader" Relationship="Self.FK__Favorites__RID__7D439ABD" FromRole="Favorites" ToRole="Reader" />
           <NavigationProperty Name="Writer" Relationship="Self.FK__Favorites__WID__7C4F7684" FromRole="Favorites" ToRole="Writer" />
+        </EntityType>
+        <EntityType Name="FreeMovie">
+          <Key>
+            <PropertyRef Name="FreeMovie_ID" />
+          </Key>
+          <Property Name="FreeMovie_ID" Type="Int32" Nullable="false" />
+          <Property Name="Reader_ID" Type="Int32" />
+          <Property Name="Movie_ID" Type="Int32" />
+          <Property Name="Writer_ID" Type="Int32" />
+          <Property Name="issueDate_ID" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Genre">
           <Key>
@@ -1287,6 +1308,7 @@
           <EntitySet Name="DramasClips" EntityType="Self.DramasClips" />
           <EntitySet Name="Editor" EntityType="Self.Editor" />
           <EntitySet Name="Favorites" EntityType="Self.Favorites" />
+          <EntitySet Name="FreeMovie" EntityType="Self.FreeMovie" />
           <EntitySet Name="Genre" EntityType="Self.Genre" />
           <EntitySet Name="GetMovie" EntityType="Self.GetMovie" />
           <EntitySet Name="History" EntityType="Self.History" />
@@ -1479,6 +1501,17 @@
                 <ScalarProperty Name="Movie_ID" ColumnName="Movie_ID" />
                 <ScalarProperty Name="Writer_ID" ColumnName="Writer_ID" />
                 <ScalarProperty Name="Reader_ID" ColumnName="Reader_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FreeMovie">
+            <EntityTypeMapping TypeName="BlinkMovieModel.FreeMovie">
+              <MappingFragment StoreEntitySet="FreeMovie">
+                <ScalarProperty Name="FreeMovie_ID" ColumnName="FreeMovie_ID" />
+                <ScalarProperty Name="Reader_ID" ColumnName="Reader_ID" />
+                <ScalarProperty Name="Movie_ID" ColumnName="Movie_ID" />
+                <ScalarProperty Name="Writer_ID" ColumnName="Writer_ID" />
+                <ScalarProperty Name="issueDate_ID" ColumnName="issueDate_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

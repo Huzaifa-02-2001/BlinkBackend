@@ -4,16 +4,17 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="25b92f49c61a47f099c07673f6da89b6" Name="Diagram1">
+      <Diagram DiagramId="b4fb416dcda4412e98a0b137b4439390" Name="Diagram1">
         <EntityTypeShape EntityType="BlinkMovieModel.BalanceRequests" Width="1.5" PointX="3" PointY="12" IsExpanded="true" />
         <EntityTypeShape EntityType="BlinkMovieModel.Clips" Width="1.5" PointX="3" PointY="18" IsExpanded="true" />
         <EntityTypeShape EntityType="BlinkMovieModel.DramasClips" Width="1.5" PointX="6" PointY="18.25" IsExpanded="true" />
         <EntityTypeShape EntityType="BlinkMovieModel.Editor" Width="1.5" PointX="3.75" PointY="26.625" IsExpanded="true" />
         <EntityTypeShape EntityType="BlinkMovieModel.Favorites" Width="1.5" PointX="3" PointY="14.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="BlinkMovieModel.Genre" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlinkMovieModel.FreeMovie" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlinkMovieModel.Genre" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="BlinkMovieModel.GetMovie" Width="1.5" PointX="11.25" PointY="16.375" IsExpanded="true" />
         <EntityTypeShape EntityType="BlinkMovieModel.History" Width="1.5" PointX="3" PointY="22.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="BlinkMovieModel.Interests" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlinkMovieModel.Interests" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="BlinkMovieModel.Movie" Width="1.5" PointX="6.75" PointY="8.75" IsExpanded="true" />
         <EntityTypeShape EntityType="BlinkMovieModel.Reader" Width="1.5" PointX="0.75" PointY="13.25" IsExpanded="true" />
         <EntityTypeShape EntityType="BlinkMovieModel.ReaderRate" Width="1.5" PointX="6" PointY="14.625" IsExpanded="true" />
