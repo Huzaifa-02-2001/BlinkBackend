@@ -209,7 +209,7 @@ namespace BlinkBackend.Controllers
                     Sent_ID = project.SentProject_ID,
                     Writer_ID = spro.Writer_ID,
                     Summary1 = spro.Summary,
-                    
+                    Episode = spro.Episode
                 };
 
                 db.Summary.Add(summary);

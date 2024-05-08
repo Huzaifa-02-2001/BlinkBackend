@@ -185,6 +185,7 @@ namespace BlinkBackend.Controllers
                 {
                     summary.Movie_ID = existingProject.Movie_ID;
                     summary.Sent_ID = null;
+                    
                     db.SaveChanges();
 
                 }

@@ -105,8 +105,8 @@ namespace BlinkBackend.Controllers
 
                     var lastIssuedDate = db.FreeMovie
                                     .Where(fm => fm.Reader_ID == readerId)
-                                    .OrderByDescending(fm => fm.issueDate_ID)
-                                    .Select(fm => fm.issueDate_ID)
+                                    .OrderByDescending(fm => fm.issueDate)
+                                    .Select(fm => fm.issueDate)
                                     .FirstOrDefault();
 
                     string todayDateString = DateTime.Today.ToString("yyyy-MM-dd");
@@ -119,7 +119,8 @@ namespace BlinkBackend.Controllers
                     var readerIssuedFreeMovie = db.FreeMovie.Where(fm => fm.Reader_ID == readerId).ToList();
                     
 
-                     if (hasDayPassed)
+
+                     if (hasDayPassed || lastIssuedDate==null)
                     {
                       
 
@@ -188,8 +189,9 @@ namespace BlinkBackend.Controllers
                             FreeMovie_ID = GenerateId(),
                             Movie_ID = randomSummary.Movie_ID,
                             Writer_ID = randomSummary.Writer_ID,
-                            issueDate_ID = todayDateString,
-                            Reader_ID = readerId
+                            issueDate = todayDateString,
+                            Reader_ID = readerId,
+                            Episode = randomSummary.Episode,
                         };
 
                         db.FreeMovie.Add(newFreeMovie);
@@ -200,6 +202,7 @@ namespace BlinkBackend.Controllers
                         {
                             Movie = movie,
                             Writer = writer,
+                            Episode= randomSummary.Episode,
                             IssuedMovie = newFreeMovie
                         };
 
@@ -215,7 +218,7 @@ namespace BlinkBackend.Controllers
                     {
                         
                         var lastIssuedMovie = db.FreeMovie
-                                                .Where(fm => fm.Reader_ID == readerId && fm.issueDate_ID == lastIssuedDate)
+                                                .Where(fm => fm.Reader_ID == readerId && fm.issueDate == lastIssuedDate)
                                                 .FirstOrDefault();
                         
                        var  movie = db.Movie.Where(m => m.Movie_ID == lastIssuedMovie.Movie_ID).Select(s => new
@@ -242,8 +245,9 @@ namespace BlinkBackend.Controllers
                             issueDate= lastIssuedDate,
                             Movie = movie,
                             Writer = writer,
-                         
-                        };
+                            Episode = lastIssuedMovie.Episode,
+
+                          };
 
 
                         string resultJson = JsonConvert.SerializeObject(result, jsonSettings);

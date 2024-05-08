@@ -72,7 +72,8 @@
           <Property Name="Reader_ID" Type="int" />
           <Property Name="Movie_ID" Type="int" />
           <Property Name="Writer_ID" Type="int" />
-          <Property Name="issueDate_ID" Type="varchar(max)" />
+          <Property Name="Episode" Type="int" />
+          <Property Name="issueDate" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Genre">
           <Key>
@@ -195,6 +196,7 @@
           <Property Name="Writer_ID" Type="int" />
           <Property Name="UploadDate" Type="date" />
           <Property Name="Summary" Type="varchar(max)" />
+          <Property Name="Episode" Type="int" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -774,7 +776,8 @@
           <Property Name="Reader_ID" Type="Int32" />
           <Property Name="Movie_ID" Type="Int32" />
           <Property Name="Writer_ID" Type="Int32" />
-          <Property Name="issueDate_ID" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Episode" Type="Int32" />
+          <Property Name="issueDate" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Genre">
           <Key>
@@ -924,6 +927,7 @@
           <Property Name="Writer_ID" Type="Int32" />
           <Property Name="UploadDate" Type="DateTime" Precision="0" />
           <Property Name="Summary1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Episode" Type="Int32" />
           <NavigationProperty Name="GetMovie" Relationship="Self.FK__GetMovie__SID__6B24EA82" FromRole="Summary" ToRole="GetMovie" />
           <NavigationProperty Name="Movie" Relationship="Self.FK__Summary__MID__3F466844" FromRole="Summary" ToRole="Movie" />
           <NavigationProperty Name="Writer" Relationship="Self.FK__Summary__WID__403A8C7D" FromRole="Summary" ToRole="Writer" />
@@ -1511,7 +1515,8 @@
                 <ScalarProperty Name="Reader_ID" ColumnName="Reader_ID" />
                 <ScalarProperty Name="Movie_ID" ColumnName="Movie_ID" />
                 <ScalarProperty Name="Writer_ID" ColumnName="Writer_ID" />
-                <ScalarProperty Name="issueDate_ID" ColumnName="issueDate_ID" />
+                <ScalarProperty Name="Episode" ColumnName="Episode" />
+                <ScalarProperty Name="issueDate" ColumnName="issueDate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1644,6 +1649,7 @@
                 <ScalarProperty Name="Writer_ID" ColumnName="Writer_ID" />
                 <ScalarProperty Name="UploadDate" ColumnName="UploadDate" />
                 <ScalarProperty Name="Summary1" ColumnName="Summary" />
+                <ScalarProperty Name="Episode" ColumnName="Episode" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
