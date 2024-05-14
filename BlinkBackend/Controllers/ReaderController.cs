@@ -172,7 +172,9 @@ namespace BlinkBackend.Controllers
                             s.Name,
                             s.Image,
                             s.CoverImage,
-                            s.Type
+                            s.Type,
+                            s.Category,
+                            s.Director
                         }).FirstOrDefault();
 
 
@@ -227,7 +229,9 @@ namespace BlinkBackend.Controllers
                            s.Name,
                            s.Image,
                            s.CoverImage,
-                           s.Type
+                           s.Type,
+                           s.Category,
+                           s.Director
                        }).FirstOrDefault();
 
 
@@ -289,15 +293,18 @@ namespace BlinkBackend.Controllers
         }
 
         [HttpPut]
-        public HttpResponseMessage UpdateInterests(int Reader_ID, string newInterests)
+        public HttpResponseMessage UpdateInterests(int Reader_ID, string[] newInterests)
         {
+           
+            string interestsString = string.Join(",", newInterests);
+
             using (BlinkMovieEntities db = new BlinkMovieEntities())
             {
                 var reader = db.Reader.FirstOrDefault(r => r.Reader_ID == Reader_ID);
 
                 if (reader != null)
                 {
-                    reader.Interest = newInterests;
+                    reader.Interest = interestsString;
                     db.SaveChanges();
 
                     return Request.CreateResponse(HttpStatusCode.OK, "Interests updated successfully");
@@ -309,15 +316,26 @@ namespace BlinkBackend.Controllers
             }
         }
 
-
         [HttpGet]
-
         public HttpResponseMessage GetAllMovies()
         {
             BlinkMovieEntities db = new BlinkMovieEntities();
             db.Configuration.LazyLoadingEnabled = false;
 
-            var movies = db.Movie.Where(m => m.Type == "Movie").ToList();
+            var movies = (from gm in db.GetMovie
+                          join m in db.Movie on gm.Movie_ID equals m.Movie_ID
+                          where m.Type == "Movie"
+                          select new
+                          {
+                              Movie_ID = m.Movie_ID,
+                              Name = m.Name,
+                              Type = m.Type,
+                              Image = m.Image,
+                              Rating = m.Rating,
+                          }).Distinct().ToList();
+
+
+
             if (movies != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, movies);
@@ -336,7 +354,20 @@ namespace BlinkBackend.Controllers
             BlinkMovieEntities db = new BlinkMovieEntities();
             db.Configuration.LazyLoadingEnabled = false;
 
-            var movies = db.Movie.Where(m => m.Type == "Drama").ToList();
+            var movies = (from gm in db.GetMovie
+                          join m in db.Movie on gm.Movie_ID equals m.Movie_ID
+                          where m.Type == "Drama"
+                          select new
+                          {
+                              Movie_ID = m.Movie_ID,
+                              Name = m.Name,
+                              Type = m.Type,
+                              Image = m.Image,
+                              Rating = m.Rating,
+                          }).Distinct().ToList();
+
+
+
             if (movies != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, movies);
@@ -346,7 +377,41 @@ namespace BlinkBackend.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, "Data not found");
             }
+
         }
+
+        [HttpGet]
+        public HttpResponseMessage GetAllMovieWriter(int movieId)
+        {
+            BlinkMovieEntities db = new BlinkMovieEntities();
+            db.Configuration.LazyLoadingEnabled = false;
+
+            var writers = (from gm in db.GetMovie
+                           join w in db.Writer on gm.Writer_ID equals w.Writer_ID
+                           where gm.Movie_ID == movieId
+                           select new
+                           {
+                               Writer_ID = w.Writer_ID,
+                               UserName = w.UserName,
+                               Email = w.Email,
+                               Image = w.Image
+                           }).Distinct().ToList();
+
+
+
+
+            if (writers != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, writers);
+            }
+
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, "Data not found");
+            }
+
+        }
+
 
         [HttpGet]
 

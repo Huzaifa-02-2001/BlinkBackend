@@ -36,7 +36,7 @@ namespace BlinkBackend.Controllers
 
 
 
-
+        
 
 
         [HttpPost]
@@ -142,6 +142,7 @@ namespace BlinkBackend.Controllers
                         Email = email,
                         Password = password,
                         Role = role,
+
                     };
                     db.Users.Add(cUser);
                     db.SaveChanges();
@@ -160,7 +161,8 @@ namespace BlinkBackend.Controllers
                         newUser.Balance,
                         newUser.Image,
                         newUser.UserName,
-                        newUser.Rating
+                        newUser.Rating,
+                        
                     };
 
                     var userInfo = new { Role = cUser.Role, UserData = data };
@@ -245,6 +247,7 @@ namespace BlinkBackend.Controllers
                             r.Image,
                             r.Interest,
                             r.Balance,
+                            r.Subscription
                        
                         }).FirstOrDefault();
                         break;
@@ -259,7 +262,7 @@ namespace BlinkBackend.Controllers
                           
                             e.Interest,
                       
-                            // Add other properties you want to include
+                            
                         }).FirstOrDefault();
                         break;
 

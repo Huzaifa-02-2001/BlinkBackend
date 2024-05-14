@@ -607,25 +607,39 @@ namespace BlinkBackend.Controllers
         
 
         [HttpGet]
-        public HttpResponseMessage GetAcceptedSummary(int movieId, int writerId)
+        public HttpResponseMessage GetAcceptedSummary(int movieId, int writerId, int Episode)
         {
             BlinkMovieEntities db = new BlinkMovieEntities();
 
             try
             {
-                var movieData = db.Movie.Where(m => m.Movie_ID == movieId).Select(s => s.Name).FirstOrDefault();
-                
-                var summaryData = db.Summary.Where(s => s.Movie_ID == movieId && s.Writer_ID == writerId).Select(s => s.Summary1)
-                            .FirstOrDefault(); ;
-
-                if (summaryData == null)
+                var movieData = db.Movie.Where(m => m.Movie_ID == movieId).Select(s => new
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, "Summary data not found for the given parameters");
+                    s.Name,
+                    s.Type
+                }).FirstOrDefault();
+
+                var summaryData = "";
+
+                if (movieData.Type == "Movie")
+                {
+                    summaryData = db.Summary
+                        .Where(s => s.Movie_ID == movieId && s.Writer_ID == writerId)
+                        .Select(s => s.Summary1)
+                        .FirstOrDefault();
+                }
+                else
+                {
+                    summaryData = db.Summary
+                        .Where(s => s.Movie_ID == movieId && s.Writer_ID == writerId && s.Episode == Episode)
+                        .Select(s => s.Summary1)
+                        .FirstOrDefault(); 
                 }
 
-               
 
-                var responseData = new
+
+
+                    var responseData = new
                 {
                     movieName = movieData,
                     SummaryData = summaryData,
@@ -641,20 +655,51 @@ namespace BlinkBackend.Controllers
         }
 
         [HttpGet]
-        public HttpResponseMessage GetAcceptedSummaryClips(int movieId, int writerId)
+        public HttpResponseMessage GetDramaEpisodes(int movieId ,int writerId)
         {
             BlinkMovieEntities db = new BlinkMovieEntities();
 
             try
             {
-                var movieData = db.Movie.Where(m => m.Movie_ID == movieId).Select(s => s.Name).FirstOrDefault();
-
                 
 
+            
+                    var episodes = db.Summary
+                        .Where(s => s.Movie_ID == movieId && s.Writer_ID == writerId)
+                        .Select(s => s.Episode)
+                        .Distinct().ToList();
                
 
+                     
+                
 
-                var clipsData = db.Clips
+                return Request.CreateResponse(HttpStatusCode.OK, episodes);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetAcceptedSummaryClips(int movieId, int writerId, int Episode)
+        {
+            BlinkMovieEntities db = new BlinkMovieEntities();
+
+            try
+            {
+                var movieData = db.Movie.Where(m => m.Movie_ID == movieId).Select(s => new
+                {
+                    s.Name,
+                    s.Type
+                }).FirstOrDefault();
+
+
+                object clipsData ;
+
+                if (movieData.Type == "Movie")
+                {
+                    clipsData = db.Clips
                                     .Where(c => c.Movie_ID == movieId && c.Writer_ID == writerId)
                                     .Select(c => new
                                     {
@@ -667,6 +712,25 @@ namespace BlinkBackend.Controllers
                                     })
                                     .OrderBy(c => c.Start_time)
                                     .ToList();
+                }
+                else
+                {
+                    clipsData = db.DramasClips
+                                    .Where(c => c.Movie_ID == movieId && c.Writer_ID == writerId && c.Episode == Episode)
+                                    .Select(c => new
+                                    {
+                                        c.DramasClip_ID,
+                                        c.Url,
+                                        c.End_time,
+                                        c.Start_time,
+                                        c.Title,
+                                        c.isCompoundClip
+                                    })
+                                    .OrderBy(c => c.Start_time)
+                                    .ToList();
+                }
+
+
                 if (clipsData == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, "Clips data not found for the given parameters");
