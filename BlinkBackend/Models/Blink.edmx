@@ -12,6 +12,9 @@
           <Property Name="Balance_ID" Type="int" Nullable="false" />
           <Property Name="Reader_ID" Type="int" />
           <Property Name="Balance" Type="int" />
+          <Property Name="RequestDate" Type="varchar(max)" />
+          <Property Name="Status" Type="varchar(max)" />
+          <Property Name="adminNotifications" Type="bit" />
         </EntityType>
         <EntityType Name="Clips">
           <Key>
@@ -222,6 +225,9 @@
           <Property Name="Interest" Type="varchar(max)" />
           <Property Name="Balance" Type="int" />
           <Property Name="Rating" Type="float" />
+          <Property Name="TotalRatings" Type="int" />
+          <Property Name="TotalRatingSum" Type="int" />
+          <Property Name="AverageRating" Type="float" />
         </EntityType>
         <Association Name="FK__BalanceRequ__RID__08B54D69">
           <End Role="Reader" Type="Self.Reader" Multiplicity="0..1" />
@@ -703,6 +709,9 @@
           <Property Name="Balance_ID" Type="Int32" Nullable="false" />
           <Property Name="Reader_ID" Type="Int32" />
           <Property Name="Balance" Type="Int32" />
+          <Property Name="RequestDate" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="adminNotifications" Type="Boolean" />
           <NavigationProperty Name="Reader" Relationship="Self.FK__BalanceRequ__RID__08B54D69" FromRole="BalanceRequests" ToRole="Reader" />
         </EntityType>
         <EntityType Name="Clips">
@@ -959,6 +968,9 @@
           <Property Name="Interest" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Balance" Type="Int32" />
           <Property Name="Rating" Type="Double" />
+          <Property Name="TotalRatings" Type="Int32" />
+          <Property Name="TotalRatingSum" Type="Int32" />
+          <Property Name="AverageRating" Type="Double" />
           <NavigationProperty Name="Clips" Relationship="Self.FK__Clips__WID__628FA481" FromRole="Writer" ToRole="Clips" />
           <NavigationProperty Name="DramasClips" Relationship="Self.FK__DramasCli__Write__51300E55" FromRole="Writer" ToRole="DramasClips" />
           <NavigationProperty Name="Favorites" Relationship="Self.FK__Favorites__WID__7C4F7684" FromRole="Writer" ToRole="Favorites" />
@@ -1450,6 +1462,9 @@
                 <ScalarProperty Name="Balance_ID" ColumnName="Balance_ID" />
                 <ScalarProperty Name="Reader_ID" ColumnName="Reader_ID" />
                 <ScalarProperty Name="Balance" ColumnName="Balance" />
+                <ScalarProperty Name="RequestDate" ColumnName="RequestDate" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="adminNotifications" ColumnName="adminNotifications" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1677,6 +1692,9 @@
                 <ScalarProperty Name="Interest" ColumnName="Interest" />
                 <ScalarProperty Name="Balance" ColumnName="Balance" />
                 <ScalarProperty Name="Rating" ColumnName="Rating" />
+                <ScalarProperty Name="TotalRatings" ColumnName="TotalRatings" />
+                <ScalarProperty Name="TotalRatingSum" ColumnName="TotalRatingSum" />
+                <ScalarProperty Name="AverageRating" ColumnName="AverageRating" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

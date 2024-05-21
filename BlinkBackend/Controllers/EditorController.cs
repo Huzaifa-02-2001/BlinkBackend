@@ -65,6 +65,9 @@ namespace BlinkBackend.Controllers
         {
             using (BlinkMovieEntities db = new BlinkMovieEntities())
             {
+                db.Configuration.LazyLoadingEnabled = false;
+                db.Configuration.ProxyCreationEnabled = false;
+
                 var movies = db.Movie.Where(m => m.Type == "Movie").ToList();
 
                 if (movies.Any())
@@ -78,7 +81,29 @@ namespace BlinkBackend.Controllers
             }
         }
 
-        
+        [HttpGet]
+        public HttpResponseMessage GetAllDramas()
+        {
+            using (BlinkMovieEntities db = new BlinkMovieEntities())
+            {
+                db.Configuration.LazyLoadingEnabled = false;
+                db.Configuration.ProxyCreationEnabled = false;
+
+                var movies = db.Movie.Where(m => m.Type == "Drama").ToList();
+
+                if (movies.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, movies);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No movies found");
+                }
+            }
+        }
+
+
+
 
         [HttpGet]
         public HttpResponseMessage GetAllWriters()
@@ -393,7 +418,9 @@ namespace BlinkBackend.Controllers
             }
         }
 
-        [HttpGet]
+      
+
+            [HttpGet]
         public HttpResponseMessage FetchSummary(int sentProjectId)
         {
             BlinkMovieEntities db = new BlinkMovieEntities();
@@ -1053,6 +1080,104 @@ namespace BlinkBackend.Controllers
             }
         }
 
+        [HttpGet]
+        public HttpResponseMessage GetBalanceRequests()
+        {
+            using (var db = new BlinkMovieEntities())
+            {
+                var balanceRequests = db.BalanceRequests
+                    .Select(br => new
+                    {
+                        br.Balance_ID,
+                        br.Balance,
+                        br.RequestDate,
+                       br.Status,
+                        ReaderDetails = db.Reader
+                            .Where(r => r.Reader_ID == br.Reader_ID)
+                            .Select(r => new
+                            {
+                                r.UserName,
+                                r.Email,
+                                r.Image
+                            })
+                            .FirstOrDefault()
+                    })
+                    .ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, balanceRequests);
+            }
+        }
+
+        [HttpGet]
+        
+        public HttpResponseMessage GetAdminNotificationCount()
+        {
+            using (var db = new BlinkMovieEntities())
+            {
+                
+                var notificationCount = db.BalanceRequests
+                                          .Count(br => br.adminNotifications == true);
+
+                return Request.CreateResponse(HttpStatusCode.OK, notificationCount);
+            }
+        }
+
+        [HttpPut]
+        
+        public HttpResponseMessage ResetAdminNotifications()
+        {
+            using (var db = new BlinkMovieEntities())
+            {
+                var balanceRequests = db.BalanceRequests.Where(br => br.adminNotifications==true);
+
+                foreach (var request in balanceRequests)
+                {
+                    request.adminNotifications = false;
+                }
+
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, "Admin notifications reset successfully.");
+            }
+        }
+
+        [HttpPut]
+       
+        public HttpResponseMessage AcceptBalanceRequest(int id)
+        {
+            using (var db = new BlinkMovieEntities())
+            {
+                var balanceRequest = db.BalanceRequests.FirstOrDefault(br => br.Balance_ID == id);
+
+                if (balanceRequest == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Balance request not found.");
+                }
+
+                if (balanceRequest.Status == "Accepted")
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Balance request is already accepted.");
+                }
+
+                var reader = db.Reader.FirstOrDefault(r => r.Reader_ID == balanceRequest.Reader_ID);
+
+                if (reader == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Reader not found.");
+                }
+
+                
+                reader.Balance += balanceRequest.Balance;
+
+                
+                balanceRequest.Status = "Accepted";
+
+                
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, "Balance request accepted and reader's balance updated.");
+            }
+        }
     }
 
 

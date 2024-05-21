@@ -17,6 +17,9 @@ namespace BlinkBackend.Models
         public int Balance_ID { get; set; }
         public Nullable<int> Reader_ID { get; set; }
         public Nullable<int> Balance { get; set; }
+        public string RequestDate { get; set; }
+        public string Status { get; set; }
+        public Nullable<bool> adminNotifications { get; set; }
     
         public virtual Reader Reader { get; set; }
     }

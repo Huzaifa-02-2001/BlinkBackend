@@ -99,7 +99,7 @@ namespace BlinkBackend.Controllers
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 };
-
+                db.Configuration.LazyLoadingEnabled = false;
                 try
                 {
 
@@ -394,7 +394,8 @@ namespace BlinkBackend.Controllers
                                Writer_ID = w.Writer_ID,
                                UserName = w.UserName,
                                Email = w.Email,
-                               Image = w.Image
+                               Image = w.Image,
+                               Rating = w.AverageRating
                            }).Distinct().ToList();
 
 
