@@ -283,6 +283,19 @@ namespace BlinkBackend.Controllers
                     .FirstOrDefault();
                         break;
 
+                    case "admin":
+                        additionalInfo = db.Admin
+                    .Where(w => w.Admin_ID == user.Editor_ID)
+                    .Select(w => new
+                    {
+                        w.Admin_ID,
+                        w.Email,
+                        w.UserName,
+                      
+                    })
+                    .FirstOrDefault();
+                        break;
+
                     default:
                         return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid user role");
                 }

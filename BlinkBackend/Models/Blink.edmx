@@ -5,6 +5,14 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
       <Schema Namespace="BlinkMovieModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Admin">
+          <Key>
+            <PropertyRef Name="Admin_ID" />
+          </Key>
+          <Property Name="Admin_ID" Type="int" Nullable="false" />
+          <Property Name="UserName" Type="varchar(max)" />
+          <Property Name="Email" Type="varchar(max)" />
+        </EntityType>
         <EntityType Name="BalanceRequests">
           <Key>
             <PropertyRef Name="Balance_ID" />
@@ -127,6 +135,9 @@
           <Property Name="Rating" Type="float" />
           <Property Name="TotalNoOfRatings" Type="int" />
           <Property Name="anySummaryOrClip" Type="bit" />
+          <Property Name="TotalRatings" Type="int" />
+          <Property Name="TotalRatingSum" Type="int" />
+          <Property Name="AverageRating" Type="float" />
         </EntityType>
         <EntityType Name="Reader">
           <Key>
@@ -566,6 +577,7 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="BlinkMovieModelStoreContainer">
+          <EntitySet Name="Admin" EntityType="Self.Admin" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BalanceRequests" EntityType="Self.BalanceRequests" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Clips" EntityType="Self.Clips" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DramasClips" EntityType="Self.DramasClips" Schema="dbo" store:Type="Tables" />
@@ -702,6 +714,14 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="BlinkMovieModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Admin">
+          <Key>
+            <PropertyRef Name="Admin_ID" />
+          </Key>
+          <Property Name="Admin_ID" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
         <EntityType Name="BalanceRequests">
           <Key>
             <PropertyRef Name="Balance_ID" />
@@ -844,6 +864,9 @@
           <Property Name="Rating" Type="Double" />
           <Property Name="TotalNoOfRatings" Type="Int32" />
           <Property Name="anySummaryOrClip" Type="Boolean" />
+          <Property Name="TotalRatings" Type="Int32" />
+          <Property Name="TotalRatingSum" Type="Int32" />
+          <Property Name="AverageRating" Type="Double" />
           <NavigationProperty Name="Clips" Relationship="Self.FK__Clips__MID__6383C8BA" FromRole="Movie" ToRole="Clips" />
           <NavigationProperty Name="DramasClips" Relationship="Self.FK__DramasCli__Movie__531856C7" FromRole="Movie" ToRole="DramasClips" />
           <NavigationProperty Name="Favorites" Relationship="Self.FK__Favorites__MID__7B5B524B" FromRole="Movie" ToRole="Favorites" />
@@ -1319,6 +1342,7 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="BlinkMovieEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Admin" EntityType="Self.Admin" />
           <EntitySet Name="BalanceRequests" EntityType="Self.BalanceRequests" />
           <EntitySet Name="Clips" EntityType="Self.Clips" />
           <EntitySet Name="DramasClips" EntityType="Self.DramasClips" />
@@ -1456,6 +1480,15 @@
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="BlinkMovieModelStoreContainer" CdmEntityContainer="BlinkMovieEntities">
+          <EntitySetMapping Name="Admin">
+            <EntityTypeMapping TypeName="BlinkMovieModel.Admin">
+              <MappingFragment StoreEntitySet="Admin">
+                <ScalarProperty Name="Admin_ID" ColumnName="Admin_ID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="BalanceRequests">
             <EntityTypeMapping TypeName="BlinkMovieModel.BalanceRequests">
               <MappingFragment StoreEntitySet="BalanceRequests">
@@ -1587,6 +1620,9 @@
                 <ScalarProperty Name="Rating" ColumnName="Rating" />
                 <ScalarProperty Name="TotalNoOfRatings" ColumnName="TotalNoOfRatings" />
                 <ScalarProperty Name="anySummaryOrClip" ColumnName="anySummaryOrClip" />
+                <ScalarProperty Name="TotalRatings" ColumnName="TotalRatings" />
+                <ScalarProperty Name="TotalRatingSum" ColumnName="TotalRatingSum" />
+                <ScalarProperty Name="AverageRating" ColumnName="AverageRating" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

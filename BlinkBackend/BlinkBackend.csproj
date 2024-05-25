@@ -302,6 +302,9 @@
     </Compile>
     <Compile Include="Classes\Log.cs" />
     <Compile Include="Classes\User.cs" />
+    <Compile Include="Models\Admin.cs">
+      <DependentUpon>Blink.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\BalanceRequests.cs">
       <DependentUpon>Blink.tt</DependentUpon>
     </Compile>

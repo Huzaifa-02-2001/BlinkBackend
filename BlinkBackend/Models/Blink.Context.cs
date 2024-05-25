@@ -25,6 +25,7 @@ namespace BlinkBackend.Models
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Admin> Admin { get; set; }
         public virtual DbSet<BalanceRequests> BalanceRequests { get; set; }
         public virtual DbSet<Clips> Clips { get; set; }
         public virtual DbSet<DramasClips> DramasClips { get; set; }
