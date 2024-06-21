@@ -23,7 +23,7 @@ namespace BlinkBackend.Models
         public string Image { get; set; }
         public string Genre { get; set; }
         public string Type { get; set; }
-        public Nullable<int> Episode { get; set; }
+        public string Episode { get; set; }
         public string Director { get; set; }
         public Nullable<int> Balance { get; set; }
         public string Status { get; set; }

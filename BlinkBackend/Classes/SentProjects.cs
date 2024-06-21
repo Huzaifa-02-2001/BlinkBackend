@@ -14,7 +14,7 @@ namespace BlinkBackend.Classes
         public string Type { get; set; }
         public Nullable<int> SentProposal_ID { get; set; }
         public string Status { get; set; }
-         public int Episode { get; set; }
+         public string Episode { get; set; }
         public string Summary { get; set; }
         public Clips1[] Clips { get; set; }
         public string EditorComment { get; set; }

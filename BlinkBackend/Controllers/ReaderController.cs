@@ -46,6 +46,7 @@ namespace BlinkBackend.Controllers
                     Reader_ID = f.Reader_ID,
                     Writer_ID = f.Writer_ID,
                     Movie_ID = f.Movie_ID,
+                    Episode=f.Episode,
                 };
 
                 db.Favorites.Add(favorites);
@@ -61,7 +62,30 @@ namespace BlinkBackend.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
+
+        public HttpResponseMessage RemovefromFavorites(int Favorites_ID)
+        {
+            try
+            {
+                BlinkMovieEntities db = new BlinkMovieEntities();
+
+               var favorite =  db.Favorites.Where(f => f.Favorites_ID == Favorites_ID).FirstOrDefault();
+
+                db.Favorites.Remove(favorite);
+                db.SaveChanges();
+
+
+                return Request.CreateResponse(HttpStatusCode.OK, "Removed from Favorites");
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+            [HttpGet]
         public HttpResponseMessage GetReaderFavoriteMovies(int readerId)
         {
             using (BlinkMovieEntities db = new BlinkMovieEntities())
@@ -79,12 +103,17 @@ namespace BlinkBackend.Controllers
                               w => w.Writer_ID,
                               (fm, w) => new
                               {
+                                  Favorites_ID = fm.f.Favorites_ID,
                                   MovieId = fm.m.Movie_ID,
                                   MovieName = fm.m.Name,
                                   MovieImage = fm.m.Image,
+                                  Writer_ID = w.Writer_ID,
+                                  Type = fm.m.Type,
+                                  Episode= fm.f.Episode,
                                   WriterName = w.UserName,
-                                  WriterImage = w.Image
-                              })
+                                  WriterImage = w.Image,
+                                  isFavorited = true
+                              }).Distinct()
                         .ToList();
 
                     if (favoriteMovies == null || !favoriteMovies.Any())
@@ -362,22 +391,33 @@ namespace BlinkBackend.Controllers
        
 
         [HttpPut]
-        public HttpResponseMessage UpdateInterests(int Reader_ID, string[] newInterests)
+        public HttpResponseMessage UpdateInterests(int ID, string newInterests,string Role)
         {
            
-            string interestsString = string.Join(",", newInterests);
+          /*  string interestsString = string.Join(",", newInterests);*/
 
             using (BlinkMovieEntities db = new BlinkMovieEntities())
             {
-                var reader = db.Reader.FirstOrDefault(r => r.Reader_ID == Reader_ID);
-
-                if (reader != null)
+               if(Role == "Reader")
                 {
-                    reader.Interest = interestsString;
+                    var reader = db.Reader.FirstOrDefault(r => r.Reader_ID == ID);
+
+                    reader.Interest = newInterests;
                     db.SaveChanges();
 
                     return Request.CreateResponse(HttpStatusCode.OK, "Interests updated successfully");
                 }
+
+               else if(Role == "Writer")
+                {
+                    var writer = db.Writer.FirstOrDefault(r => r.Writer_ID == ID);
+
+                    writer.Interest = newInterests;
+                    db.SaveChanges();
+
+                    return Request.CreateResponse(HttpStatusCode.OK, "Interests updated successfully");
+                }
+                
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, "User not found");
@@ -386,104 +426,149 @@ namespace BlinkBackend.Controllers
         }
 
         [HttpGet]
-        public HttpResponseMessage GetAllMovies()
+        public HttpResponseMessage GetAllMovies(string genre=null,string searchTerm = null)
         {
-            BlinkMovieEntities db = new BlinkMovieEntities();
-            db.Configuration.LazyLoadingEnabled = false;
-
-            var movies = (from gm in db.GetMovie
-                          join m in db.Movie on gm.Movie_ID equals m.Movie_ID
-                          where m.Type == "Movie"
-                          select new
-                          {
-                              Movie_ID = m.Movie_ID,
-                              Name = m.Name,
-                              Type = m.Type,
-                              Image = m.Image,
-                              Rating = m.Rating,
-                          }).Distinct().ToList();
-
-
-
-            if (movies != null)
+            using (BlinkMovieEntities db = new BlinkMovieEntities())
             {
-                return Request.CreateResponse(HttpStatusCode.OK, movies);
+                db.Configuration.LazyLoadingEnabled = false;
+
+                var moviesQuery = from gm in db.GetMovie
+                                  join m in db.Movie on gm.Movie_ID equals m.Movie_ID
+                                  where m.Type == "Movie"
+                                  select new
+                                  {
+                                      Movie_ID = m.Movie_ID,
+                                      Name = m.Name,
+                                      Type = m.Type,
+                                      Image = m.Image,
+                                      Rating = m.AverageRating,
+                                      Category = m.Category
+                                  };
+
+               
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    if (moviesQuery.Any(m => m.Name.Contains(searchTerm)))
+                    {
+                        moviesQuery = moviesQuery.Where(m => m.Name.Contains(searchTerm));
+                    }
+                    else
+                    {
+                       
+                        moviesQuery = moviesQuery;
+                    }
+                }
+                else if (!string.IsNullOrEmpty(genre))
+                {
+                    moviesQuery = moviesQuery.Where(m => m.Category.Contains(genre));
+                    
+                }
+
+                /* else if (!string.IsNullOrEmpty(searchTerm) && !string.IsNullOrEmpty(genre))
+                  {
+                      moviesQuery = moviesQuery.Where(m => m.Name.Contains(searchTerm) || m.Category.Contains(genre));
+                  }*/
+
+             /*   if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    moviesQuery = moviesQuery.Where(m => m.Name.Contains(searchTerm));
+                }
+*/
+                var movies = moviesQuery.Distinct().ToList();
+
+                if (movies.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, movies);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Data not found");
+                }
             }
-
-            else
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, "Data not found");
-            }
-
-        }
-
-        [HttpGet]
-        public HttpResponseMessage GetAllDramas()
-        {
-            BlinkMovieEntities db = new BlinkMovieEntities();
-            db.Configuration.LazyLoadingEnabled = false;
-
-            var movies = (from gm in db.GetMovie
-                          join m in db.Movie on gm.Movie_ID equals m.Movie_ID
-                          where m.Type == "Drama"
-                          select new
-                          {
-                              Movie_ID = m.Movie_ID,
-                              Name = m.Name,
-                              Type = m.Type,
-                              Image = m.Image,
-                              Rating = m.Rating,
-                          }).Distinct().ToList();
-
-
-
-            if (movies != null)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, movies);
-            }
-
-            else
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, "Data not found");
-            }
-
-        }
-
-        [HttpGet]
-        public HttpResponseMessage GetAllMovieWriter(int movieId)
-        {
-            BlinkMovieEntities db = new BlinkMovieEntities();
-            db.Configuration.LazyLoadingEnabled = false;
-
-            var writers = (from gm in db.GetMovie
-                           join w in db.Writer on gm.Writer_ID equals w.Writer_ID
-                           where gm.Movie_ID == movieId
-                           select new
-                           {
-                               Writer_ID = w.Writer_ID,
-                               UserName = w.UserName,
-                               Email = w.Email,
-                               Image = w.Image,
-                               Rating = w.AverageRating
-                           }).Distinct().ToList();
-
-
-
-
-            if (writers != null)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, writers);
-            }
-
-            else
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, "Data not found");
-            }
-
         }
 
 
         [HttpGet]
+        public HttpResponseMessage GetAllDramas(string genre = null,string searchTerm = null)
+        {
+            using (BlinkMovieEntities db = new BlinkMovieEntities())
+            {
+                db.Configuration.LazyLoadingEnabled = false;
+
+                var moviesQuery = from gm in db.GetMovie
+                                  join m in db.Movie on gm.Movie_ID equals m.Movie_ID
+                                  where m.Type == "Drama"
+                                  select new
+                                  {
+                                      Movie_ID = m.Movie_ID,
+                                      Name = m.Name,
+                                      Type = m.Type,
+                                      Image = m.Image,
+                                      Rating = m.AverageRating,
+                                  };
+
+
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    moviesQuery = moviesQuery.Where(m => m.Name.Contains(searchTerm));
+                }
+
+                var movies = moviesQuery.Distinct().ToList();
+
+                if (movies.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, movies);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Data not found");
+                }
+            }
+        }
+
+
+        [HttpGet]
+        public HttpResponseMessage GetAllMovieWriter(int movieId, string searchTerm = null)
+        {
+            using (BlinkMovieEntities db = new BlinkMovieEntities())
+            {
+                db.Configuration.LazyLoadingEnabled = false;
+
+                var writersQuery = from gm in db.GetMovie
+                                   join w in db.Writer on gm.Writer_ID equals w.Writer_ID
+                                   where gm.Movie_ID == movieId
+                                   select new
+                                   {
+                                       Writer_ID = w.Writer_ID,
+                                       UserName = w.UserName,
+                                       Email = w.Email,
+                                       Image = w.Image,
+                                       Rating = w.AverageRating
+                                   };
+
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    string lowerCaseSearchTerm = searchTerm.ToLower();
+                    writersQuery = writersQuery.Where(w => w.UserName.ToLower().Contains(lowerCaseSearchTerm) );
+                }
+
+                var writers = writersQuery.Distinct().ToList();
+
+                if (writers.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, writers);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Data not found");
+                }
+            }
+        }
+    
+
+
+
+    [HttpGet]
 
         public HttpResponseMessage GetSpecificMovie(int Movie_ID)
         {
@@ -503,7 +588,7 @@ namespace BlinkBackend.Controllers
 
         }
 
-        [HttpGet]
+      /*  [HttpGet]
         public HttpResponseMessage GetMovieDetails(int Movie_ID)
         {
             using (BlinkMovieEntities db = new BlinkMovieEntities())
@@ -546,7 +631,7 @@ namespace BlinkBackend.Controllers
                 }
             }
         }
-
+*/
 
         [HttpGet]
         public HttpResponseMessage GetSummary(int Writer_ID, int Movie_ID)
@@ -769,7 +854,49 @@ namespace BlinkBackend.Controllers
             BlinkMovieEntities db = new BlinkMovieEntities();
             db.Configuration.LazyLoadingEnabled = false;
 
-            var movies = db.Movie.Where(m => m.Rating > 4.0).ToList<Movie>();
+            var movies = db.Movie.Where(m => m.AverageRating > 4.0 && m.Type=="Movie").Select( s => new
+            {
+                s.Movie_ID,
+                s.Rating,
+                s.Name,
+                s.AverageRating,
+                s.Image,
+                s.Type,
+                s.Category,
+                s.Director
+            }).ToList();
+
+            if (movies != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, movies);
+            }
+
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, "Data not found");
+            }
+
+        }
+
+        [HttpGet]
+
+        public HttpResponseMessage GetTopRatedDrama()
+        {
+            BlinkMovieEntities db = new BlinkMovieEntities();
+            db.Configuration.LazyLoadingEnabled = false;
+
+            var movies = db.Movie.Where(m => m.AverageRating > 4.0 && m.Type == "Drama").Select(s => new
+            {
+                s.Movie_ID,
+                s.Rating,
+                s.Name,
+                s.AverageRating,
+                s.Image,
+                s.Type,
+                s.Category,
+                s.Director
+            }).ToList();
+
             if (movies != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, movies);
@@ -820,72 +947,18 @@ namespace BlinkBackend.Controllers
 
 
         [HttpPost]
-        public HttpResponseMessage RateWriter(int Reader_ID, int Writer_ID, float writerRate)
-        {
-            using (BlinkMovieEntities db = new BlinkMovieEntities())
-            {
-                db.Configuration.LazyLoadingEnabled = false;
-
-                
-                var reader = db.Reader.FirstOrDefault(r => r.Reader_ID == Reader_ID);
-                if (reader == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, "Reader not found");
-                }
-
-                
-                var writer = db.Writer.FirstOrDefault(w => w.Writer_ID == Writer_ID);
-                if (writer == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, "Writer not found");
-                }
-     
-                var existingWriterRating = db.ReaderRate.FirstOrDefault(r => r.Reader_ID == Reader_ID && r.Writer_ID == Writer_ID);
-
-                if (existingWriterRating != null)
-                {
-                    
-                    writer.Rating = ((writer.Rating * writer.Rating) - existingWriterRating.Writer_Rating) / 5;
-                    writer.Rating -= 1;
-
-                   
-                    db.ReaderRate.Remove(existingWriterRating);
-                }
-
-                var writerRateEntity = new ReaderRate
-                {
-                    ReaderRate_ID = GenerateId(),
-                    Reader_ID = Reader_ID,
-                    Writer_ID = Writer_ID,
-                    Writer_Rating = writerRate
-                };
-        
-                db.ReaderRate.Add(writerRateEntity);
-                db.SaveChanges();
-          
-                writer.Rating = ((writer.Rating * writer.Rating) + writerRate) / 5;
-                writer.Rating += 1;
-
-                db.SaveChanges();
-
-                return Request.CreateResponse(HttpStatusCode.OK, "Writer rating successfully submitted");
-            }
-        }
-
-
-        [HttpPost]
-        public HttpResponseMessage UpdateWriterRating(int writerId, int rating)
+        public HttpResponseMessage UpdateWriterRating(int Reader_ID,int writerId, double rating)
         {
 
             using (var db = new BlinkMovieEntities())
             {
                 db.Configuration.LazyLoadingEnabled = false;
                 db.Configuration.ProxyCreationEnabled = false;
-                var writer = db.Writer.FirstOrDefault(w => w.Writer_ID == writerId);
+                var  writr = db.Writer.FirstOrDefault(w => w.Writer_ID == writerId);
 
-                if (writer == null)
+                if (writr == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, "Writer not found");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Movie not found");
                 }
 
 
@@ -894,24 +967,74 @@ namespace BlinkBackend.Controllers
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Rating should be between 0 and 5");
                 }
 
-                int? totalRatings = writer.TotalRatings + 1;
-                int? totalRatingSum = writer.TotalRatingSum + rating;
-                double? averageRating = (double)totalRatingSum / totalRatings;
+             var readerRating = db.ReaderRate.Where(rr => rr.Writer_ID == writerId && rr.Reader_ID == Reader_ID).FirstOrDefault();
 
 
-                writer.TotalRatings = totalRatings;
-                writer.TotalRatingSum = totalRatingSum;
-                writer.AverageRating = averageRating;
+                if (readerRating != null)
+                {
+                    var writer = db.Writer.Where(s => s.Writer_ID == writerId).FirstOrDefault();
+                    writer.TotalRatings = writer.TotalRatings - 1;
+                    writer.TotalRatingSum = writer.TotalRatingSum - readerRating.Movie_Rating;
 
+                    db.SaveChanges();
+
+                    int? totalRatings = writr.TotalRatings + 1;
+                    double? totalRatingSum = writr.TotalRatingSum + rating;
+                    double? averageRating = (double)totalRatingSum / totalRatings;
+
+                    writr.TotalRatings = totalRatings;
+                    writr.TotalRatingSum = totalRatingSum;
+                    writr.AverageRating = averageRating;
+
+
+                    db.ReaderRate.Remove(readerRating);
+                    db.SaveChanges();
+
+                    var readerRate = new ReaderRate
+                    {
+                        ReaderRate_ID = GenerateId(),
+                        Writer_ID = writerId,
+                        Reader_ID = Reader_ID,
+                        Writer_Rating = rating
+                    };
+
+
+                    db.ReaderRate.Add(readerRate);
+                    db.SaveChanges();
+                }
+
+                else
+                {
+                    int? totalRatings = writr.TotalRatings + 1;
+                    double? totalRatingSum = writr.TotalRatingSum + rating;
+                    double? averageRating = (double)totalRatingSum / totalRatings;
+
+                    writr.TotalRatings = totalRatings;
+                    writr.TotalRatingSum = totalRatingSum;
+                    writr.AverageRating = averageRating;
+
+                    var readerRate = new ReaderRate
+                    {
+                        ReaderRate_ID = GenerateId(),
+                        Writer_ID = writerId,
+                        Reader_ID = Reader_ID,
+                        Writer_Rating = rating
+                    };
+
+
+                    db.ReaderRate.Add(readerRate);
+                    db.SaveChanges();
+                }
 
                 db.SaveChanges();
 
-                return Request.CreateResponse(HttpStatusCode.OK, "Writer rating updated successfully");
+                return Request.CreateResponse(HttpStatusCode.OK, "Movie rating updated successfully");
+
             }
         }
 
         [HttpPost]
-        public HttpResponseMessage UpdateMovieRating(int movieId, int rating)
+        public HttpResponseMessage UpdateMovieRating(int Reader_ID,int movieId, double rating)
         {
 
             using (var db = new BlinkMovieEntities())
@@ -931,15 +1054,68 @@ namespace BlinkBackend.Controllers
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Rating should be between 0 and 5");
                 }
 
-                int? totalRatings = movie.TotalRatings + 1;
-                int? totalRatingSum = movie.TotalRatingSum + rating;
+               /* int? totalRatings = movie.TotalRatings + 1;
+                double? totalRatingSum = movie.TotalRatingSum + rating;
                 double? averageRating = (double)totalRatingSum / totalRatings;
+*/
+                var readerRating = db.ReaderRate.Where(rr => rr.Movie_ID == movieId && rr.Reader_ID == Reader_ID).FirstOrDefault();
 
 
-                movie.TotalRatings = totalRatings;
-                movie.TotalRatingSum = totalRatingSum;
-                movie.AverageRating = averageRating;
+                if (readerRating != null)
+                {
+                    var summary= db.Movie.Where(s => s.Movie_ID == movieId).FirstOrDefault();
+                    summary.TotalRatings = summary.TotalRatings - 1;
+                    summary.TotalRatingSum = summary.TotalRatingSum - readerRating.Movie_Rating;
 
+                    db.SaveChanges();
+
+                    int? totalRatings = movie.TotalRatings + 1;
+                    double? totalRatingSum = movie.TotalRatingSum + rating;
+                    double? averageRating = (double)totalRatingSum / totalRatings;
+
+                    movie.TotalRatings = totalRatings;
+                    movie.TotalRatingSum = totalRatingSum;
+                    movie.AverageRating = averageRating;
+
+
+                    db.ReaderRate.Remove(readerRating);
+                    db.SaveChanges();
+
+                    var readerRate = new ReaderRate
+                    {
+                        ReaderRate_ID = GenerateId(),
+                        Movie_ID = movieId,
+                        Reader_ID = Reader_ID,
+                        Movie_Rating = rating
+                    };
+
+
+                    db.ReaderRate.Add(readerRate);
+                    db.SaveChanges();
+                }
+
+                    else
+                    {
+                        int? totalRatings = movie.TotalRatings + 1;
+                        double? totalRatingSum = movie.TotalRatingSum + rating;
+                        double? averageRating = (double)totalRatingSum / totalRatings;
+
+                        movie.TotalRatings = totalRatings;
+                        movie.TotalRatingSum = totalRatingSum;
+                        movie.AverageRating = averageRating;
+
+                    var readerRate = new ReaderRate
+                    {
+                        ReaderRate_ID = GenerateId(),
+                        Movie_ID =movieId, 
+                        Reader_ID = Reader_ID, 
+                        Movie_Rating = rating 
+                    };
+
+                   
+                    db.ReaderRate.Add(readerRate);
+                    db.SaveChanges();
+                }
 
                 db.SaveChanges();
 

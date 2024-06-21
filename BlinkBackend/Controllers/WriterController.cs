@@ -189,7 +189,7 @@ namespace BlinkBackend.Controllers
 
             BlinkMovieEntities db = new BlinkMovieEntities();
             DateTime currentDate = DateTime.Now;
-
+            double currentSeconds = currentDate.TimeOfDay.TotalSeconds;
 
             var proposal = db.SentProposals.Where(s => s.SentProposal_ID == spro.SentProposal_ID).FirstOrDefault();
             try
@@ -237,7 +237,8 @@ namespace BlinkBackend.Controllers
                             Title = clip.Title,
                             isCompoundClip = clip.isCompoundClip,
                             Start_time = clip.Start_Time,
-                            End_time = clip.End_Time
+                            End_time = clip.End_Time,
+                            DateAdded = currentSeconds.ToString(),
                         };
 
                         db.Clips.Add(newClip);
@@ -258,7 +259,8 @@ namespace BlinkBackend.Controllers
                             isCompoundClip = clip.isCompoundClip,
                             Start_time = clip.Start_Time,
                             End_time = clip.End_Time,
-                            Episode = clip.Episode
+                            Episode = clip.Episode,
+                            DateAdded = currentSeconds.ToString(),
                         };
 
                         db.DramasClips.Add(newDramasClip);
@@ -735,6 +737,29 @@ namespace BlinkBackend.Controllers
                 db.SaveChanges();
 
                 return Request.CreateResponse(HttpStatusCode.OK, "All Writer notifications updated to false for the specified writer");
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetInterests()
+        {
+            try
+            {
+                BlinkMovieEntities db = new BlinkMovieEntities();
+
+
+                var interests = db.Interests.Where(i => i.Interest_ID>0).Select(s=>s.Interests1).ToList();
+
+                if (interests.Count == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No Interest records found");
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, interests);
             }
             catch (Exception ex)
             {

@@ -40,6 +40,7 @@
           <Property Name="isCompoundClip" Type="bit" />
           <Property Name="Description" Type="varchar(max)" />
           <Property Name="Likes" Type="int" />
+          <Property Name="DateAdded" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="DramasClips">
           <Key>
@@ -51,10 +52,11 @@
           <Property Name="Movie_ID" Type="int" />
           <Property Name="Title" Type="varchar(max)" />
           <Property Name="Url" Type="varchar(max)" />
-          <Property Name="Episode" Type="int" />
+          <Property Name="Episode" Type="varchar(max)" />
           <Property Name="Start_time" Type="varchar(max)" />
           <Property Name="End_time" Type="varchar(max)" />
           <Property Name="isCompoundClip" Type="bit" />
+          <Property Name="DateAdded" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Editor">
           <Key>
@@ -74,6 +76,7 @@
           <Property Name="Movie_ID" Type="int" />
           <Property Name="Writer_ID" Type="int" />
           <Property Name="Reader_ID" Type="int" />
+          <Property Name="Episode" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="FreeMovie">
           <Key>
@@ -83,7 +86,7 @@
           <Property Name="Reader_ID" Type="int" />
           <Property Name="Movie_ID" Type="int" />
           <Property Name="Writer_ID" Type="int" />
-          <Property Name="Episode" Type="int" />
+          <Property Name="Episode" Type="varchar(max)" />
           <Property Name="issueDate" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Genre">
@@ -136,7 +139,7 @@
           <Property Name="TotalNoOfRatings" Type="int" />
           <Property Name="anySummaryOrClip" Type="bit" />
           <Property Name="TotalRatings" Type="int" />
-          <Property Name="TotalRatingSum" Type="int" />
+          <Property Name="TotalRatingSum" Type="float" />
           <Property Name="AverageRating" Type="float" />
         </EntityType>
         <EntityType Name="Reader">
@@ -191,7 +194,7 @@
           <Property Name="Image" Type="varchar(max)" />
           <Property Name="Genre" Type="varchar(max)" />
           <Property Name="Type" Type="varchar(max)" />
-          <Property Name="Episode" Type="int" />
+          <Property Name="Episode" Type="varchar(max)" />
           <Property Name="Director" Type="varchar(max)" />
           <Property Name="Balance" Type="int" />
           <Property Name="Status" Type="varchar(max)" />
@@ -210,7 +213,7 @@
           <Property Name="Writer_ID" Type="int" />
           <Property Name="UploadDate" Type="date" />
           <Property Name="Summary" Type="varchar(max)" />
-          <Property Name="Episode" Type="int" />
+          <Property Name="Episode" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -237,7 +240,7 @@
           <Property Name="Balance" Type="int" />
           <Property Name="Rating" Type="float" />
           <Property Name="TotalRatings" Type="int" />
-          <Property Name="TotalRatingSum" Type="int" />
+          <Property Name="TotalRatingSum" Type="float" />
           <Property Name="AverageRating" Type="float" />
         </EntityType>
         <Association Name="FK__BalanceRequ__RID__08B54D69">
@@ -750,6 +753,7 @@
           <Property Name="isCompoundClip" Type="Boolean" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Likes" Type="Int32" />
+          <Property Name="DateAdded" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Movie" Relationship="Self.FK__Clips__MID__6383C8BA" FromRole="Clips" ToRole="Movie" />
           <NavigationProperty Name="Writer" Relationship="Self.FK__Clips__WID__628FA481" FromRole="Clips" ToRole="Writer" />
           <NavigationProperty Name="GetMovie" Relationship="Self.FK__GetMovie__CID__6C190EBB" FromRole="Clips" ToRole="GetMovie" />
@@ -764,10 +768,11 @@
           <Property Name="Movie_ID" Type="Int32" />
           <Property Name="Title" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Url" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="Episode" Type="Int32" />
+          <Property Name="Episode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Start_time" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="End_time" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="isCompoundClip" Type="Boolean" />
+          <Property Name="DateAdded" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Movie" Relationship="Self.FK__DramasCli__Movie__531856C7" FromRole="DramasClips" ToRole="Movie" />
           <NavigationProperty Name="SentProject" Relationship="Self.FK__DramasCli__Sent___5224328E" FromRole="DramasClips" ToRole="SentProject" />
           <NavigationProperty Name="Writer" Relationship="Self.FK__DramasCli__Write__51300E55" FromRole="DramasClips" ToRole="Writer" />
@@ -793,6 +798,7 @@
           <Property Name="Movie_ID" Type="Int32" />
           <Property Name="Writer_ID" Type="Int32" />
           <Property Name="Reader_ID" Type="Int32" />
+          <Property Name="Episode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Movie" Relationship="Self.FK__Favorites__MID__7B5B524B" FromRole="Favorites" ToRole="Movie" />
           <NavigationProperty Name="Reader" Relationship="Self.FK__Favorites__RID__7D439ABD" FromRole="Favorites" ToRole="Reader" />
           <NavigationProperty Name="Writer" Relationship="Self.FK__Favorites__WID__7C4F7684" FromRole="Favorites" ToRole="Writer" />
@@ -805,7 +811,7 @@
           <Property Name="Reader_ID" Type="Int32" />
           <Property Name="Movie_ID" Type="Int32" />
           <Property Name="Writer_ID" Type="Int32" />
-          <Property Name="Episode" Type="Int32" />
+          <Property Name="Episode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="issueDate" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Genre">
@@ -865,7 +871,7 @@
           <Property Name="TotalNoOfRatings" Type="Int32" />
           <Property Name="anySummaryOrClip" Type="Boolean" />
           <Property Name="TotalRatings" Type="Int32" />
-          <Property Name="TotalRatingSum" Type="Int32" />
+          <Property Name="TotalRatingSum" Type="Double" />
           <Property Name="AverageRating" Type="Double" />
           <NavigationProperty Name="Clips" Relationship="Self.FK__Clips__MID__6383C8BA" FromRole="Movie" ToRole="Clips" />
           <NavigationProperty Name="DramasClips" Relationship="Self.FK__DramasCli__Movie__531856C7" FromRole="Movie" ToRole="DramasClips" />
@@ -938,7 +944,7 @@
           <Property Name="Image" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Genre" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="Episode" Type="Int32" />
+          <Property Name="Episode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Director" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Balance" Type="Int32" />
           <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
@@ -959,7 +965,7 @@
           <Property Name="Writer_ID" Type="Int32" />
           <Property Name="UploadDate" Type="DateTime" Precision="0" />
           <Property Name="Summary1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="Episode" Type="Int32" />
+          <Property Name="Episode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="GetMovie" Relationship="Self.FK__GetMovie__SID__6B24EA82" FromRole="Summary" ToRole="GetMovie" />
           <NavigationProperty Name="Movie" Relationship="Self.FK__Summary__MID__3F466844" FromRole="Summary" ToRole="Movie" />
           <NavigationProperty Name="Writer" Relationship="Self.FK__Summary__WID__403A8C7D" FromRole="Summary" ToRole="Writer" />
@@ -992,7 +998,7 @@
           <Property Name="Balance" Type="Int32" />
           <Property Name="Rating" Type="Double" />
           <Property Name="TotalRatings" Type="Int32" />
-          <Property Name="TotalRatingSum" Type="Int32" />
+          <Property Name="TotalRatingSum" Type="Double" />
           <Property Name="AverageRating" Type="Double" />
           <NavigationProperty Name="Clips" Relationship="Self.FK__Clips__WID__628FA481" FromRole="Writer" ToRole="Clips" />
           <NavigationProperty Name="DramasClips" Relationship="Self.FK__DramasCli__Write__51300E55" FromRole="Writer" ToRole="DramasClips" />
@@ -1516,6 +1522,7 @@
                 <ScalarProperty Name="isCompoundClip" ColumnName="isCompoundClip" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Likes" ColumnName="Likes" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1532,6 +1539,7 @@
                 <ScalarProperty Name="Start_time" ColumnName="Start_time" />
                 <ScalarProperty Name="End_time" ColumnName="End_time" />
                 <ScalarProperty Name="isCompoundClip" ColumnName="isCompoundClip" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1553,6 +1561,7 @@
                 <ScalarProperty Name="Movie_ID" ColumnName="Movie_ID" />
                 <ScalarProperty Name="Writer_ID" ColumnName="Writer_ID" />
                 <ScalarProperty Name="Reader_ID" ColumnName="Reader_ID" />
+                <ScalarProperty Name="Episode" ColumnName="Episode" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

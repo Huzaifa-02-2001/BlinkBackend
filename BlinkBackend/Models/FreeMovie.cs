@@ -18,7 +18,7 @@ namespace BlinkBackend.Models
         public Nullable<int> Reader_ID { get; set; }
         public Nullable<int> Movie_ID { get; set; }
         public Nullable<int> Writer_ID { get; set; }
-        public Nullable<int> Episode { get; set; }
+        public string Episode { get; set; }
         public string issueDate { get; set; }
     }
 }

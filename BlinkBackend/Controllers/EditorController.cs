@@ -252,7 +252,7 @@ namespace BlinkBackend.Controllers
             string[] genreArray = request.Form.GetValues("Genre");
             HashSet<string> uniqueGenres = new HashSet<string>(genreArray);
             string genre = string.Join(",", uniqueGenres);
-            int episode = Int32.Parse(request["Episode"]);
+            string episode = request["Episode"];
             int Balance = Int32.Parse(request["Balance"]);
             string type = request["Type"];
             string director = request["Director"];
@@ -634,7 +634,7 @@ namespace BlinkBackend.Controllers
         
 
         [HttpGet]
-        public HttpResponseMessage GetAcceptedSummary(int movieId, int writerId, int Episode)
+        public HttpResponseMessage GetAcceptedSummary(int movieId, int writerId, string Episode)
         {
             BlinkMovieEntities db = new BlinkMovieEntities();
 
@@ -709,7 +709,7 @@ namespace BlinkBackend.Controllers
         }
 
         [HttpGet]
-        public HttpResponseMessage GetAcceptedSummaryClips(int movieId, int writerId, int Episode)
+        public HttpResponseMessage GetAcceptedSummaryClips(int movieId, int writerId, string Episode)
         {
             BlinkMovieEntities db = new BlinkMovieEntities();
 
@@ -735,9 +735,10 @@ namespace BlinkBackend.Controllers
                                         c.End_time,
                                         c.Start_time,
                                         c.Title,
-                                        c.isCompoundClip
+                                        c.isCompoundClip,
+                                        c.DateAdded
                                     })
-                                    .OrderBy(c => c.Start_time)
+                                    .OrderByDescending(c => c.DateAdded)
                                     .ToList();
                 }
                 else
@@ -751,9 +752,10 @@ namespace BlinkBackend.Controllers
                                         c.End_time,
                                         c.Start_time,
                                         c.Title,
-                                        c.isCompoundClip
+                                        c.isCompoundClip,
+                                        c.DateAdded
                                     })
-                                    .OrderBy(c => c.Start_time)
+                                    .OrderByDescending(c => c.DateAdded)
                                     .ToList();
                 }
 

@@ -20,10 +20,11 @@ namespace BlinkBackend.Models
         public Nullable<int> Movie_ID { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }
-        public Nullable<int> Episode { get; set; }
+        public string Episode { get; set; }
         public string Start_time { get; set; }
         public string End_time { get; set; }
         public Nullable<bool> isCompoundClip { get; set; }
+        public string DateAdded { get; set; }
     
         public virtual Movie Movie { get; set; }
         public virtual SentProject SentProject { get; set; }

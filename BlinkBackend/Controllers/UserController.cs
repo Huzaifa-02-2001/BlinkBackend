@@ -65,7 +65,7 @@ namespace BlinkBackend.Controllers
             
 
 
-                // Create a user based on the role
+                
                 if (role == "Reader")
                 {
                     var newUser = new Reader()

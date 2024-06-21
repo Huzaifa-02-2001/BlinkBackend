@@ -32,6 +32,7 @@ namespace BlinkBackend.Models
         public Nullable<bool> isCompoundClip { get; set; }
         public string Description { get; set; }
         public Nullable<int> Likes { get; set; }
+        public string DateAdded { get; set; }
     
         public virtual Movie Movie { get; set; }
         public virtual Writer Writer { get; set; }
