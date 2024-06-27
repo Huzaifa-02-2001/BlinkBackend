@@ -26,6 +26,7 @@ namespace BlinkBackend.Models
         public string Episode { get; set; }
         public string Director { get; set; }
         public Nullable<int> Balance { get; set; }
+        public string Cast { get; set; }
         public string Status { get; set; }
         public string Sent_at { get; set; }
         public string DueDate { get; set; }

@@ -169,7 +169,23 @@ namespace BlinkBackend.Controllers
             try
             {
                 var proposals = db.SentProposals
-                                    .Where(s => s.Writer_ID == Writer_ID && s.Status == "Sent")
+                                    .Where(s => s.Writer_ID == Writer_ID && s.Status == "Sent").Select(s => new
+                                    {
+                                        s.SentProposal_ID,
+                                        s.Sent_at,
+                                        s.Cast,
+                                        s.Cover_Image,
+                                        s.Image,
+                                        s.Status,
+                                        s.Movie_Name,
+                                        s.Movie_ID,
+                                        s.Balance,
+                                        s.Director,
+                                        s.DueDate,
+                                        s.Type,
+                                        s.Genre,
+                                        s.Editor_ID
+                                    })
                                     .OrderByDescending(s => s.Sent_at)
                                     .ToList();
 

@@ -257,6 +257,7 @@ namespace BlinkBackend.Controllers
             string type = request["Type"];
             string director = request["Director"];
             string dueDate = request["DueDate"];
+            string cast = request["Cast"];
 
 
             DateTime currentDate = DateTime.Now;
@@ -282,6 +283,7 @@ namespace BlinkBackend.Controllers
                         Genre = genre,
                         Type = type,
                         Director = director,
+                        Cast = cast,
                         DueDate =dueDate,
                         Status = "Sent",
                         Episode = episode,
@@ -312,6 +314,7 @@ namespace BlinkBackend.Controllers
                         Category = genre,
                         Type = type,
                         Director = director,
+                        Cast= cast,
                         anySummaryOrClip = false
                     };
 
@@ -345,6 +348,7 @@ namespace BlinkBackend.Controllers
                         Genre = genre,
                         Type = type,
                         Director = director,
+                        Cast =cast,
                         DueDate = dueDate,
                       Episode = episode,
                       Sent_at = currentDate.ToString(),
@@ -435,13 +439,40 @@ namespace BlinkBackend.Controllers
                 }
 
                 var summaryData = db.Summary
-                                    .FirstOrDefault(s => s.Sent_ID == project.SentProject_ID);
+                                    .Where(s => s.Sent_ID == project.SentProject_ID).Select(s => new
+                                    {
+                                        s.Sent_ID,
+                                        s.Summary_ID,
+                                        s.Summary1,
+                                        s.Episode,
+                                        s.Writer_ID,
+                                        
+                                    }).FirstOrDefault();
 
                 var movieData = db.Movie
-                                    .FirstOrDefault(m => m.Movie_ID == project.Movie_ID);
+                                    .Where(m => m.Movie_ID == project.Movie_ID).Select(s => new
+                                    {
+                                        s.Movie_ID,
+                                        s.Name,
+                                        s.Image,
+                                        s.CoverImage,
+                                        s.Category,
+                                        s.Cast,
+                                        s.Type,
+                                        s.Director,
+
+                                    }).FirstOrDefault();
 
                 var writerData = db.Writer
-                                    .FirstOrDefault(w => w.Writer_ID == project.Writer_ID);
+                                    .Where(w => w.Writer_ID == project.Writer_ID).Select(s =>new
+                                    {
+                                        s.Writer_ID,
+                                        s.Email,
+                                        s.UserName,
+                                        s.Image,
+                                        s.Interest,
+                                        s.Balance
+                                    }).FirstOrDefault();
 
                 string mediaType = movieData.Type;
 

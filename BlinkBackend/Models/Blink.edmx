@@ -135,6 +135,7 @@
           <Property Name="Type" Type="varchar(max)" />
           <Property Name="Description" Type="varchar(max)" />
           <Property Name="Director" Type="varchar(max)" />
+          <Property Name="Cast" Type="varchar(max)" />
           <Property Name="Rating" Type="float" />
           <Property Name="TotalNoOfRatings" Type="int" />
           <Property Name="anySummaryOrClip" Type="bit" />
@@ -197,6 +198,7 @@
           <Property Name="Episode" Type="varchar(max)" />
           <Property Name="Director" Type="varchar(max)" />
           <Property Name="Balance" Type="int" />
+          <Property Name="Cast" Type="varchar(max)" />
           <Property Name="Status" Type="varchar(max)" />
           <Property Name="Sent_at" Type="varchar(max)" />
           <Property Name="DueDate" Type="varchar(max)" />
@@ -867,6 +869,7 @@
           <Property Name="Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Director" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Cast" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Rating" Type="Double" />
           <Property Name="TotalNoOfRatings" Type="Int32" />
           <Property Name="anySummaryOrClip" Type="Boolean" />
@@ -947,6 +950,7 @@
           <Property Name="Episode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Director" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Balance" Type="Int32" />
+          <Property Name="Cast" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Sent_at" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="DueDate" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
@@ -1626,6 +1630,7 @@
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Director" ColumnName="Director" />
+                <ScalarProperty Name="Cast" ColumnName="Cast" />
                 <ScalarProperty Name="Rating" ColumnName="Rating" />
                 <ScalarProperty Name="TotalNoOfRatings" ColumnName="TotalNoOfRatings" />
                 <ScalarProperty Name="anySummaryOrClip" ColumnName="anySummaryOrClip" />
@@ -1692,6 +1697,7 @@
                 <ScalarProperty Name="Episode" ColumnName="Episode" />
                 <ScalarProperty Name="Director" ColumnName="Director" />
                 <ScalarProperty Name="Balance" ColumnName="Balance" />
+                <ScalarProperty Name="Cast" ColumnName="Cast" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Sent_at" ColumnName="Sent_at" />
                 <ScalarProperty Name="DueDate" ColumnName="DueDate" />

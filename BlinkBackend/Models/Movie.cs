@@ -34,6 +34,7 @@ namespace BlinkBackend.Models
         public string Type { get; set; }
         public string Description { get; set; }
         public string Director { get; set; }
+        public string Cast { get; set; }
         public Nullable<double> Rating { get; set; }
         public Nullable<int> TotalNoOfRatings { get; set; }
         public Nullable<bool> anySummaryOrClip { get; set; }
